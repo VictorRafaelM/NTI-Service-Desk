@@ -1,10 +1,14 @@
-Sistema de Controle de Chamados - NTI/SMS
+Observação: Não se trata de um sistema de uso real dos locais informados abaixo. É apenas um trabalho de faculdade que foi desenvolvido após entrevista com os responsáveis dos respectivos núcleos/setores.
+
+# Sistema de Controle de Chamados - NTI
 ## PMVCA - Secretaria Municipal de Saúde
-Sistema local para controle de chamados de suporte técnico, patrimônio (máquinas), estoque de peças e relatórios do núcleo de TI.
+
+Sistema local para controle de chamados de suporte técnico, patrimônio (máquinas), estoque de peças e relatórios do Nũcleo de TI - Secretaria Municipal de Saúde.
 
 ---
 
 ## Requisitos
+
 - Python 3.8+
 - Linux ou Windows
 
@@ -26,6 +30,8 @@ Acesse: **http://localhost:5000**
 
 ## Login Padrão
 
+| Campo | Valor        |
+|-------|--------------|
 | CPF   | 00000000000  |
 | Senha | admin123     |
 
@@ -33,6 +39,8 @@ Acesse: **http://localhost:5000**
 
 ## Módulos
 
+| Módulo       | Descrição |
+|--------------|-----------|
 | Usuários     | Cadastro, edição, ativação/desativação de usuários com perfis: Admin, Técnico, Usuário |
 | Máquinas     | Patrimônio com tombo, histórico de setor, situação |
 | Estoque      | Peças com entrada/saída e histórico de movimentações |
@@ -43,6 +51,8 @@ Acesse: **http://localhost:5000**
 
 ## Perfis de Acesso
 
+| Perfil    | Permissões |
+|-----------|-----------|
 | Admin     | Acesso total, gerencia usuários |
 | Técnico   | Assume e encerra chamados, edita máquinas e estoque |
 | Usuário   | Abre chamados, consulta |
