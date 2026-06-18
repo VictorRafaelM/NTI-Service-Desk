@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Chamado #{{ chamado.id }}{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#128222; Chamado #{{ chamado.id }} — {{ chamado.titulo }}</div>
+  <div class="window-body">
+    <div class="toolbar">
+      <a href="/chamados" class="btn">&#8592; Voltar</a>
+      {% if chamado.status == 'aberto' and session.perfil in ('admin','tecnico') %}
+      <form method="post" action="/chamados/{{ chamado.id }}/assumir" style="display:inline">
+        <input type="submit" class="btn btn-primary" value="&#9654; Assumir Chamado">
+      </form>
+      {% endif %}
+      {% if chamado.status in ('aberto','em_andamento') and session.perfil in ('admin','tecnico') %}
+      <a href="/chamados/{{ chamado.id }}/fechar" class="btn btn-primary">&#10003; Encerrar Chamado</a>
+      {% endif %}
+      {% if chamado.status == 'concluido' and session.perfil in ('admin','tecnico') %}
+      <form method="post" action="/chamados/{{ chamado.id }}/reabrir" style="display:inline"
+            onsubmit="return confirm('Reabrir este chamado? A solução registrada será apagada.')">
+        <input type="submit" class="btn" value="&#8635; Reabrir Chamado" style="background:#e8a000;color:#fff">
+      </form>
+      {% endif %}
+      {% if session.perfil == 'admin' %}
+      <form method="post" action="/chamados/{{ chamado.id }}/excluir" style="display:inline"
+            onsubmit="return confirm('Excluir permanentemente este chamado?')">
+        <input type="submit" class="btn btn-danger btn-sm" value="Excluir">
+      </form>
+      {% endif %}
+    </div>
+    <hr>
+    <dl class="info-grid">
+      <dt>Status:</dt>
+      <dd><span class="badge badge-{{ chamado.status }}">{{ chamado.status|replace('_',' ')|upper }}</span></dd>
+      <dt>Prioridade:</dt>
+      <dd><span class="badge badge-{{ chamado.prioridade }}">{{ chamado.prioridade|upper }}</span></dd>
+      <dt>Setor:</dt><dd>{{ chamado.setor }}</dd>
+      <dt>Máquina:</dt>
+      <dd>
+        {% if chamado.tombo %}
+          Tombo: <strong>{{ chamado.tombo }}</strong> — {{ chamado.marca }} {{ chamado.modelo }}
+          (Setor: {{ chamado.maquina_setor }})
+          — Situação: <span class="badge badge-{{ chamado.maquina_situacao }}">{{ chamado.maquina_situacao|upper }}</span>
+          &nbsp;<a href="/maquinas/{{ chamado.mid }}/historico" class="btn btn-sm">Ver Máquina</a>
+        {% else %}Não informada{% endif %}
+      </dd>
+      <dt>Aberto por:</dt><dd>{{ chamado.aberto_por_nome }}</dd>
+      <dt>Aberto em:</dt><dd>{{ chamado.criado_em[:16] }}</dd>
+      <dt>Técnico:</dt><dd>{{ chamado.tecnico_nome or '— Aguardando atribuição' }}</dd>
+      {% if chamado.assumido_em %}<dt>Assumido em:</dt><dd>{{ chamado.assumido_em[:16] }}</dd>{% endif %}
+      {% if chamado.concluido_em %}<dt>Concluído em:</dt><dd>{{ chamado.concluido_em[:16] }}</dd>{% endif %}
+    </dl>
+    <hr>
+    <strong>Descrição do Problema:</strong>
+    <div style="background:#fff;border:2px inset #808080;padding:8px;margin-top:6px;min-height:60px;font-size:12px;white-space:pre-wrap">{{ chamado.descricao }}</div>
+
+    {% if chamado.solucao %}
+    <strong style="display:block;margin-top:10px">Solução Aplicada:</strong>
+    <div style="background:#d4edda;border:2px inset #808080;padding:8px;margin-top:6px;font-size:12px;white-space:pre-wrap">{{ chamado.solucao }}</div>
+    {% endif %}
+
+    {% if pecas_usadas %}
+    <strong style="display:block;margin-top:10px">Peças Utilizadas nesta Manutenção:</strong>
+    <table style="margin-top:4px">
+      <tr><th>Peça</th><th>Quantidade</th><th>Data</th><th>Técnico</th></tr>
+      {% for pu in pecas_usadas %}
+      <tr>
+        <td>{{ pu.peca_nome }}</td>
+        <td>{{ pu.quantidade }}</td>
+        <td>{{ pu.data[:16] }}</td>
+        <td>{{ pu.usuario_nome if pu["usuario_nome"] else '—' }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

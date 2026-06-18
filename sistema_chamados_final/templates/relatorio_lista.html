@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#128196; {{ titulo }}</div>
+  <div class="window-body">
+    <div class="toolbar">
+      <a href="/relatorios" class="btn">&#8592; Relatórios</a>
+      <button onclick="window.print()" class="btn">&#128424; Imprimir</button>
+    </div>
+    <p class="mb">Total de registros: <strong>{{ chamados|length }}</strong></p>
+    <table>
+      <tr><th>#</th><th>Título</th><th>Setor</th><th>Máquina</th><th>Prioridade</th><th>Status</th><th>Aberto por</th><th>Técnico</th><th>Data Abertura</th>{% if 'Concluído' in titulo %}<th>Conclusão</th>{% endif %}</tr>
+      {% for c in chamados %}
+      <tr>
+        <td><a href="/chamados/{{ c.id }}">{{ c.id }}</a></td>
+        <td>{{ c.titulo }}</td>
+        <td>{{ c.setor }}</td>
+        <td>{{ c.tombo or '—' }}</td>
+        <td><span class="badge badge-{{ c.prioridade }}">{{ c.prioridade|upper }}</span></td>
+        <td><span class="badge badge-{{ c.status }}">{{ c.status|replace('_',' ')|upper }}</span></td>
+        <td>{{ c.aberto_por_nome }}</td>
+        <td>{{ c.tecnico_nome or '—' }}</td>
+        <td>{{ c.criado_em[:10] }}</td>
+        {% if 'Concluído' in titulo %}<td>{{ c.concluido_em[:10] if c.concluido_em else '—' }}</td>{% endif %}
+      </tr>
+      {% else %}
+      <tr><td colspan="10" style="text-align:center;padding:10px">Nenhum registro encontrado.</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Relatórios{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#128196; Relatórios</div>
+  <div class="window-body">
+    <table style="max-width:600px">
+      <tr>
+        <th>Relatório</th><th>Ação</th>
+      </tr>
+      <tr>
+        <td>&#128222; Chamados Abertos (pendentes)</td>
+        <td><a href="/relatorios/abertos" class="btn btn-sm btn-primary">Visualizar</a></td>
+      </tr>
+      <tr>
+        <td>&#10003; Chamados Concluídos</td>
+        <td><a href="/relatorios/concluidos" class="btn btn-sm btn-primary">Visualizar</a></td>
+      </tr>
+      <tr>
+        <td>&#128100; Chamados por Técnico</td>
+        <td><a href="/relatorios/por_tecnico" class="btn btn-sm btn-primary">Visualizar</a></td>
+      </tr>
+      <tr>
+        <td>&#128197; Chamados por Período</td>
+        <td><a href="/relatorios/por_periodo" class="btn btn-sm btn-primary">Visualizar</a></td>
+      </tr>
+    </table>
+  </div>
+</div>
+{% endblock %}

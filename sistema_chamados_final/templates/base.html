@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Sistema TI — PMVCA{% endblock %}</title>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+{% if session.usuario_id %}
+<div class="topbar">
+  <span class="topbar-title">&#128187; PMVCA — Sistema de Controle de Chamados — TI</span>
+  <span class="topbar-user">
+    {{ session.nome }} [{{ session.perfil|upper }}] &nbsp;|&nbsp;
+    <a href="/logout" class="btn-link">Sair</a>
+  </span>
+</div>
+<div class="navbar">
+  <a href="/dashboard"  {% if request.path=='/dashboard' %}class="active"{% endif %}>&#127968; Início</a>
+  <a href="/chamados"   {% if '/chamados' in request.path %}class="active"{% endif %}>&#128222; Chamados</a>
+  <a href="/maquinas"   {% if '/maquinas' in request.path %}class="active"{% endif %}>&#128187; Máquinas</a>
+  <a href="/pecas"      {% if '/pecas' in request.path %}class="active"{% endif %}>&#128295; Peças</a>
+  <a href="/estoque"    {% if '/estoque' in request.path %}class="active"{% endif %}>&#128230; Estoque</a>
+  {% if session.perfil == 'admin' %}
+  <a href="/usuarios"   {% if '/usuarios' in request.path %}class="active"{% endif %}>&#128100; Usuários</a>
+  <a href="/logs"       {% if '/logs' in request.path %}class="active"{% endif %}>&#128196; Logs</a>
+  {% endif %}
+  <a href="/relatorios" {% if '/relatorios' in request.path %}class="active"{% endif %}>&#128202; Relatórios</a>
+</div>
+{% endif %}
+
+<div class="main-content">
+{% with msgs = get_flashed_messages(with_categories=True) %}
+  {% for cat, msg in msgs %}
+    <div class="msg msg-{{ cat }}">{% if cat=='ok' %}✔{% else %}✖{% endif %} {{ msg }}</div>
+  {% endfor %}
+{% endwith %}
+{% block content %}{% endblock %}
+</div>
+
+<div class="statusbar">
+  Sistema TI — PREFEITURA MUNICIPAL DE VITÓRIA DA CONQUISTA
+  {% if session.usuario_id %}&nbsp;|&nbsp; Setor: {{ session.setor }}{% endif %}
+</div>
+<script src="/static/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Histórico &mdash; {{ maquina.tombo }}{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#128196; Histórico de Setor &mdash; Tombo: {{ maquina.tombo }} &mdash; {{ maquina.marca }} {{ maquina.modelo }}</div>
+  <div class="window-body">
+    <div class="toolbar">
+      <a href="/maquinas" class="btn">&#8592; Voltar</a>
+      {% if session.perfil in ('admin','tecnico') %}
+      <a href="/maquinas/{{ maquina.id }}/editar" class="btn">Editar Máquina</a>
+      {% endif %}
+    </div>
+    <dl class="info-grid mb">
+      <dt>Tombo:</dt><dd>{{ maquina.tombo }}</dd>
+      <dt>Marca / Modelo:</dt><dd>{{ maquina.marca }} {{ maquina.modelo }}</dd>
+      <dt>Tipo:</dt><dd>{{ maquina.tipo }}</dd>
+      <dt>Serial:</dt><dd>{{ maquina.serial or '—' }}</dd>
+      <dt>Unidade:</dt><dd>{{ maquina.unidade }}</dd>
+      <dt>Setor Atual:</dt><dd><strong>{{ maquina.setor }}</strong></dd>
+      <dt>Situação:</dt><dd><span class="badge badge-{{ maquina.situacao }}">{{ maquina.situacao|upper }}</span></dd>
+      <dt>Cadastrado em:</dt><dd>{{ maquina.criado_em[:16] }}</dd>
+    </dl>
+    <hr>
+    <strong>Histórico de Transferências de Setor:</strong>
+    {% if historico %}
+    <table style="margin-top:8px">
+      <tr><th>Data</th><th>Setor Anterior</th><th>Setor Novo</th><th>Motivo</th><th>Registrado por</th></tr>
+      {% for h in historico %}
+      <tr>
+        <td>{{ h.data[:16] }}</td>
+        <td>{{ h.setor_anterior or '—' }}</td>
+        <td><strong>{{ h.setor_novo }}</strong></td>
+        <td>{{ h.motivo or '—' }}</td>
+        <td>{{ h.usuario_nome or '—' }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <p style="padding:8px;color:#555">Nenhuma transferência registrada.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

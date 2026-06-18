@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}{% if registro %}Editar Estoque{% else %}Novo Estoque{% endif %}{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#128230; {% if registro %}Editar Estoque — {{ registro.peca_nome }}{% else %}Cadastrar Estoque{% endif %}</div>
+  <div class="window-body">
+    <form method="post">
+      {% if registro %}
+      <div class="form-group">
+        <label>Peça</label>
+        <input type="text" value="{{ registro.peca_nome }}" disabled>
+      </div>
+      {% else %}
+      <div class="form-group">
+        <label>Peça <span class="required">*</span></label>
+        <select name="peca_id" required>
+          <option value="">-- Selecione a peça --</option>
+          {% for p in pecas %}
+          <option value="{{ p.id }}" {% if form.get('peca_id')|string == p.id|string %}selected{% endif %}>{{ p.nome }} ({{ p.categoria }})</option>
+          {% endfor %}
+        </select>
+        {% if not pecas %}
+        <p style="font-size:11px;color:#856404;margin-top:4px">
+          Todas as peças cadastradas já possuem um registro de estoque, ou nenhuma peça foi cadastrada ainda.
+          <a href="/pecas/nova">Cadastrar nova peça</a>.
+        </p>
+        {% endif %}
+      </div>
+      {% endif %}
+      <div class="form-group">
+        <label>Local <span class="required">*</span></label>
+        <select name="local" required>
+          <option value="">-- Selecione --</option>
+          {% for l in locais %}
+          <option value="{{ l }}" {% if form.get('local') == l %}selected{% endif %}>{{ l }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% if not registro %}
+      <div class="form-group">
+        <label>Quantidade Inicial</label>
+        <input type="number" name="quantidade" value="{{ form.get('quantidade','0') }}" min="0">
+      </div>
+      {% endif %}
+      <div class="form-group">
+        <label>Observação</label>
+        <textarea name="observacao">{{ form.get('observacao','') }}</textarea>
+      </div>
+      <div class="form-actions">
+        <input type="submit" class="btn btn-primary" value="{% if registro %}Salvar{% else %}Cadastrar Estoque{% endif %}">
+        <a href="/estoque" class="btn">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

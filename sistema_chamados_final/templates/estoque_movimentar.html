@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Movimentar Estoque{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#128230; Movimentar Estoque &mdash; {{ registro.peca_nome }} ({{ registro.local }})</div>
+  <div class="window-body">
+    <p class="mb">Estoque atual: <strong>{{ registro.quantidade }}</strong> unidade(s)</p>
+    <form method="post">
+      <div class="form-group">
+        <label>Tipo <span class="required">*</span></label>
+        <select name="tipo" required>
+          <option value="entrada">&#43; Entrada</option>
+          <option value="saida">&#8722; Saída</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Quantidade <span class="required">*</span></label>
+        <input type="number" name="quantidade" min="1" value="1" required>
+      </div>
+      <div class="form-group">
+        <label>Motivo <span class="required">*</span></label>
+        <select name="motivo" required>
+          <option value="">-- Selecione --</option>
+          <option value="Manutenção">Manutenção</option>
+          <option value="Perda">Perda</option>
+          <option value="Transferência">Transferência</option>
+          <option value="Reposição de estoque">Reposição de estoque</option>
+          <option value="Compra">Compra</option>
+          <option value="Devolução">Devolução</option>
+          <option value="Outro">Outro</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Chamado relacionado</label>
+        <input type="number" name="chamado_id" placeholder="Número do chamado (opcional)">
+      </div>
+      <div class="form-actions">
+        <input type="submit" class="btn btn-primary" value="Registrar Movimentação">
+        <a href="/estoque" class="btn">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

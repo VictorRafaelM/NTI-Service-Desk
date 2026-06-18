@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block title %}Início{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#127968; Dashboard — Visão Geral do Sistema</div>
+  <div class="window-body">
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-num" style="color:#856404">{{ stats.abertos }}</span>
+        <span class="stat-label">Chamados Abertos</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num" style="color:#004085">{{ stats.andamento }}</span>
+        <span class="stat-label">Em Andamento</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num" style="color:#155724">{{ stats.concluidos }}</span>
+        <span class="stat-label">Concluídos</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">{{ stats.maquinas }}</span>
+        <span class="stat-label">Máquinas Ativas</span>
+      </div>
+      {% if stats.meus > 0 %}
+      <div class="stat-card">
+        <span class="stat-num" style="color:#004085">{{ stats.meus }}</span>
+        <span class="stat-label">Meus em Andamento</span>
+      </div>
+      {% endif %}
+      {% if stats.pecas_baixo > 0 %}
+      <div class="stat-card">
+        <span class="stat-num" style="color:#c00000">{{ stats.pecas_baixo }}</span>
+        <span class="stat-label">Peças com Baixo Estoque</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+
+      <!-- Chamados urgentes -->
+      <div style="flex:2;min-width:300px">
+        <div class="window-title" style="margin-bottom:4px">&#9888; Chamados Pendentes (por prioridade)</div>
+        {% if urgentes %}
+        <table>
+          <tr><th>#</th><th>Título</th><th>Setor</th><th>Prior.</th><th>Status</th><th>Aberto</th><th></th></tr>
+          {% for c in urgentes %}
+          <tr>
+            <td>{{ c.id }}</td>
+            <td>{{ c.titulo[:40] }}{% if c.titulo|length > 40 %}…{% endif %}</td>
+            <td>{{ c.setor }}</td>
+            <td><span class="badge badge-{{ c.prioridade }}">{{ c.prioridade|upper }}</span></td>
+            <td><span class="badge badge-{{ c.status }}">{{ c.status|replace('_',' ')|upper }}</span></td>
+            <td>{{ c.criado_em[:10] }}</td>
+            <td><a href="/chamados/{{ c.id }}" class="btn btn-sm">Ver</a></td>
+          </tr>
+          {% endfor %}
+        </table>
+        <div class="toolbar" style="margin-top:6px">
+          <a href="/chamados/novo" class="btn btn-primary">+ Abrir Chamado</a>
+          <a href="/chamados" class="btn">Ver Todos</a>
+          {% if session.perfil in ('admin','tecnico') %}
+          <a href="/chamados?meus=1" class="btn">Meus Chamados</a>
+          {% endif %}
+        </div>
+        {% else %}
+        <p style="padding:10px;color:#155724;background:#d4edda;border:1px solid #c3e6cb">&#10003; Nenhum chamado pendente!</p>
+        <div class="toolbar"><a href="/chamados/novo" class="btn btn-primary">+ Abrir Chamado</a></div>
+        {% endif %}
+      </div>
+
+      <!-- Coluna direita -->
+      <div style="flex:1;min-width:220px">
+        {% if pecas_baixo %}
+        <div class="window-title" style="margin-bottom:4px">&#9888; Estoque Baixo</div>
+        <table>
+          <tr><th>Peça</th><th>Qtd</th></tr>
+          {% for p in pecas_baixo %}
+          <tr>
+            <td><a href="/pecas/{{ p.peca_id }}/historico">{{ p.nome[:30] }}</a> <span style="font-size:10px;color:#777">({{ p.local }})</span></td>
+            <td><strong style="color:{% if p.quantidade==0 %}red{% else %}#856404{% endif %}">{{ p.quantidade }}</strong></td>
+          </tr>
+          {% endfor %}
+        </table>
+        <div class="toolbar" style="margin-top:6px"><a href="/estoque" class="btn">Ver Estoque</a></div>
+        {% endif %}
+
+        <div class="window-title" style="margin-top:10px;margin-bottom:4px">&#128196; Atividade Recente</div>
+        <table>
+          <tr><th>Ação</th><th>Usuário</th><th>Hora</th></tr>
+          {% for l in logs_rec %}
+          <tr>
+            <td style="font-size:11px">{{ l.acao|replace('_',' ') }}</td>
+            <td style="font-size:11px">{{ l.usuario_nome or '—' }}</td>
+            <td style="font-size:11px">{{ l.data[11:16] }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

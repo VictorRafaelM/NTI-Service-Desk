@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Histórico &mdash; {{ peca.nome }}{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#128196; Histórico de Movimentações &mdash; {{ peca.nome }}</div>
+  <div class="window-body">
+    <div class="toolbar">
+      <a href="/pecas" class="btn">&#8592; Voltar</a>
+    </div>
+    <dl class="info-grid mb">
+      <dt>Peça:</dt><dd>{{ peca.nome }}</dd>
+      <dt>Categoria:</dt><dd>{{ peca.categoria }}</dd>
+      <dt>Local:</dt><dd>{{ peca.estoque_local or '—' }}</dd>
+      <dt>Estoque Atual:</dt><dd><strong>{{ peca.estoque_quantidade if peca.estoque_local else '—' }}</strong></dd>
+    </dl>
+    {% if historico %}
+    <table>
+      <tr><th>Data</th><th>Tipo</th><th>Quantidade</th><th>Motivo</th><th>Chamado</th><th>Responsável</th></tr>
+      {% for h in historico %}
+      <tr>
+        <td>{{ h.data[:16] }}</td>
+        <td><strong {% if h.tipo=='entrada' %}style="color:green"{% else %}style="color:red"{% endif %}>{{ h.tipo|upper }}</strong></td>
+        <td>{{ h.quantidade }}</td>
+        <td>{{ h.motivo }}</td>
+        <td>{% if h.chamado_id %}<a href="/chamados/{{ h.chamado_id }}">#{{ h.chamado_id }}</a>{% else %}—{% endif %}</td>
+        <td>{{ h.usuario_nome or '—' }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <p style="padding:8px;color:#555">Nenhuma movimentação registrada.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

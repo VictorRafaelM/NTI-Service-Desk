@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Chamados por Técnico{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#128196; Chamados por Técnico</div>
+  <div class="window-body">
+    <div class="toolbar">
+      <a href="/relatorios" class="btn">&#8592; Relatórios</a>
+      <button onclick="window.print()" class="btn">&#128424; Imprimir</button>
+    </div>
+    <table style="max-width:600px">
+      <tr><th>Técnico</th><th>Total</th><th>Concluídos</th><th>Em Andamento</th></tr>
+      {% for d in dados %}
+      <tr>
+        <td>{{ d.tecnico_nome or 'Não atribuído' }}</td>
+        <td><strong>{{ d.total }}</strong></td>
+        <td style="color:green">{{ d.concluidos }}</td>
+        <td style="color:#004085">{{ d.em_andamento }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4" style="text-align:center;padding:10px">Nenhum dado disponível.</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}

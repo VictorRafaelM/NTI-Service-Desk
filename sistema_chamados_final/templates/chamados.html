@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Chamados{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#128222; Chamados</div>
+  <div class="window-body">
+    <div class="toolbar">
+      <a href="/chamados/novo" class="btn btn-primary">+ Abrir Chamado</a>
+      {% if session.perfil in ('admin','tecnico') %}
+      <a href="/chamados?meus=1" class="btn">Meus Chamados</a>
+      {% endif %}
+    </div>
+    <form class="search-bar" method="get">
+      <input type="text" name="q" value="{{ q }}" placeholder="Título, setor ou tombo...">
+      <select name="status">
+        <option value="">Todos os status</option>
+        <option value="aberto"       {% if status=='aberto' %}selected{% endif %}>Aberto</option>
+        <option value="em_andamento" {% if status=='em_andamento' %}selected{% endif %}>Em Andamento</option>
+        <option value="concluido"    {% if status=='concluido' %}selected{% endif %}>Concluído</option>
+      </select>
+      <select name="prioridade">
+        <option value="">Todas prioridades</option>
+        <option value="alta"  {% if prioridade=='alta' %}selected{% endif %}>Alta</option>
+        <option value="media" {% if prioridade=='media' %}selected{% endif %}>Média</option>
+        <option value="baixa" {% if prioridade=='baixa' %}selected{% endif %}>Baixa</option>
+      </select>
+      {% if meus %}<input type="hidden" name="meus" value="1">{% endif %}
+      <input type="submit" class="btn" value="Filtrar">
+      {% if q or status or prioridade or meus %}<a href="/chamados" class="btn">Limpar</a>{% endif %}
+    </form>
+    {% if meus %}<p style="color:#004085;font-weight:bold;margin-bottom:4px">&#128100; Exibindo apenas seus chamados</p>{% endif %}
+    <p style="font-size:11px;color:#555;margin-bottom:4px">Total: {{ total }} chamado(s)</p>
+    <table>
+      <tr><th>#</th><th>Título</th><th>Setor</th><th>Máquina</th><th>Prior.</th><th>Status</th><th>Aberto por</th><th>Técnico</th><th>Data</th><th></th></tr>
+      {% for c in chamados %}
+      <tr>
+        <td>{{ c.id }}</td>
+        <td>{{ c.titulo[:45] }}{% if c.titulo|length > 45 %}…{% endif %}</td>
+        <td>{{ c.setor }}</td>
+        <td>{{ c.tombo or '—' }}</td>
+        <td><span class="badge badge-{{ c.prioridade }}">{{ c.prioridade|upper }}</span></td>
+        <td><span class="badge badge-{{ c.status }}">{{ c.status|replace('_',' ')|upper }}</span></td>
+        <td>{{ c.aberto_por_nome }}</td>
+        <td>{{ c.tecnico_nome or '—' }}</td>
+        <td>{{ c.criado_em[:10] }}</td>
+        <td><a href="/chamados/{{ c.id }}" class="btn btn-sm">Ver</a></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="10" style="text-align:center;padding:10px">Nenhum chamado encontrado.</td></tr>
+      {% endfor %}
+    </table>
+    {% if total_pages > 1 %}
+    <div class="paginacao">
+      {% if page > 1 %}<a href="?q={{ q }}&status={{ status }}&prioridade={{ prioridade }}&meus={{ meus }}&page={{ page-1 }}" class="btn btn-sm">&#8592; Anterior</a>{% endif %}
+      Página {{ page }} de {{ total_pages }}
+      {% if page < total_pages %}<a href="?q={{ q }}&status={{ status }}&prioridade={{ prioridade }}&meus={{ meus }}&page={{ page+1 }}" class="btn btn-sm">Próxima &#8594;</a>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

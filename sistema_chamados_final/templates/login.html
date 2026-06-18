@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Login &mdash; Sistema TI PMVCA</title>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-box">
+    <div class="login-title">&#128187; PMVCA &mdash; Sistema de Controle de Chamados</div>
+    <div class="login-body">
+      <p style="text-align:center;font-size:11px;color:#555;margin-bottom:14px;">Setor de Tecnologia da Informação</p>
+      {% if erro %}
+      <div class="msg msg-erro">✖ {{ erro }}</div>
+      {% endif %}
+      <form method="post">
+        <div class="form-group">
+          <label for="cpf">CPF:</label>
+          <input type="text" id="cpf" name="cpf" placeholder="00000000000" maxlength="14" required autofocus>
+        </div>
+        <div class="form-group">
+          <label for="senha">Senha:</label>
+          <input type="password" id="senha" name="senha" required>
+        </div>
+        <div class="form-actions" style="justify-content:center">
+          <input type="submit" class="btn btn-primary" value="Entrar no Sistema">
+        </div>
+      </form>
+      <p style="text-align:center;font-size:10px;color:#777;margin-top:16px;">© 2025 PMVCA &mdash; Setor de TI</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

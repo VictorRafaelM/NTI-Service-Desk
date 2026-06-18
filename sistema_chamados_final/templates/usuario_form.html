@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}{% if usuario %}Editar Usuário{% else %}Novo Usuário{% endif %}{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#128100; {% if usuario %}Editar — {{ usuario.nome }}{% else %}Cadastrar Novo Usuário{% endif %}</div>
+  <div class="window-body">
+    <form method="post" autocomplete="off">
+      <div class="form-group">
+        <label>Nome Completo <span class="required">*</span></label>
+        <input type="text" name="nome" value="{{ form.get('nome','') }}" required maxlength="120">
+      </div>
+      {% if not usuario %}
+      <div class="form-group">
+        <label>CPF <span class="required">*</span></label>
+        <input type="text" name="cpf" value="{{ form.get('cpf','') }}" placeholder="Somente números (11 dígitos)" required maxlength="14">
+      </div>
+      <div class="form-group">
+        <label>Senha <span class="required">*</span></label>
+        <input type="password" name="senha" required minlength="6" placeholder="Mínimo 6 caracteres">
+      </div>
+      <div class="form-group">
+        <label>Confirmar Senha <span class="required">*</span></label>
+        <input type="password" name="confirmar_senha" required minlength="6">
+      </div>
+      {% else %}
+      <div class="form-group">
+        <label>Nova Senha</label>
+        <input type="password" name="nova_senha" minlength="6" placeholder="Deixe em branco para não alterar">
+      </div>
+      <div class="form-group">
+        <label>Confirmar Nova Senha</label>
+        <input type="password" name="confirmar_nova_senha" minlength="6">
+      </div>
+      {% endif %}
+      <div class="form-group">
+        <label>Perfil <span class="required">*</span></label>
+        <select name="perfil" required>
+          <option value="">-- Selecione --</option>
+          <option value="admin"   {% if form.get('perfil')=='admin'    %}selected{% endif %}>Administrador</option>
+          <option value="tecnico" {% if form.get('perfil')=='tecnico'  %}selected{% endif %}>Técnico</option>
+          <option value="usuario" {% if form.get('perfil')=='usuario' or not form.get('perfil') %}selected{% endif %}>Usuário</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Setor <span class="required">*</span></label>
+        <input type="text" name="setor" value="{{ form.get('setor','') }}" required maxlength="80">
+      </div>
+      {% if usuario %}
+      <div class="form-group">
+        <label>Situação</label>
+        <input type="checkbox" name="ativo" {% if form.get('ativo', usuario.ativo if usuario else 1)|int %}checked{% endif %}> Usuário ativo
+      </div>
+      {% endif %}
+      <div class="form-actions">
+        <input type="submit" class="btn btn-primary" value="{% if usuario %}Salvar Alterações{% else %}Cadastrar Usuário{% endif %}">
+        <a href="/usuarios" class="btn">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

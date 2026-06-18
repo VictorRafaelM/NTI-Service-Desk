@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Encerrar Chamado #{{ chamado.id }}{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#10003; Encerrar Chamado #{{ chamado.id }} — {{ chamado.titulo }}</div>
+  <div class="window-body">
+    <p class="mb">Setor: <strong>{{ chamado.setor }}</strong> &nbsp;|&nbsp; Prioridade: <span class="badge badge-{{ chamado.prioridade }}">{{ chamado.prioridade|upper }}</span>
+    {% if chamado.tombo %}&nbsp;|&nbsp; Máquina: <strong>{{ chamado.tombo }}</strong> — {{ chamado.modelo }}{% endif %}</p>
+    <form method="post">
+      <div class="form-group">
+        <label>Solução Aplicada <span class="required">*</span></label>
+        <textarea name="solucao" required placeholder="Descreva detalhadamente a solução aplicada..."></textarea>
+      </div>
+
+      <hr>
+      <strong>Peças utilizadas nesta manutenção:</strong>
+      <p style="font-size:11px;color:#555;margin:4px 0 8px">Adicione as peças usadas. O estoque será baixado automaticamente.</p>
+
+      <div id="pecas-lista">
+        <div class="peca-linha" style="display:flex;gap:8px;margin-bottom:6px;align-items:center">
+          <select name="peca_id[]" style="flex:2;padding:3px 6px;border:2px inset #808080;font-size:12px">
+            <option value="">— Selecione a peça —</option>
+            {% for p in pecas %}
+            <option value="{{ p.id }}" {% if p.quantidade == 0 %}style="color:#999"{% endif %}>
+              {{ p.nome }} ({{ p.categoria }}) — Estoque: {{ p.quantidade }}
+            </option>
+            {% endfor %}
+          </select>
+          <input type="number" name="peca_qtd[]" value="1" min="1" style="width:70px;padding:3px 6px;border:2px inset #808080;font-size:12px">
+          <button type="button" onclick="removerLinha(this)" class="btn btn-sm btn-danger">✖</button>
+        </div>
+      </div>
+      <button type="button" onclick="adicionarPeca()" class="btn btn-sm" style="margin-bottom:10px">+ Adicionar peça</button>
+
+      {% if chamado.maquina_id %}
+      <hr>
+      <div style="background:#fff3cd;border:2px solid #856404;padding:8px;margin-bottom:8px">
+        <strong>&#9888; Baixa da Máquina</strong><br>
+        <label style="font-weight:normal;margin-top:4px;display:flex;align-items:center;gap:6px">
+          <input type="checkbox" name="dar_baixa_maquina" value="1">
+          Máquina sem conserto — dar baixa e registrar como <strong>DESCARTADA</strong> no sistema
+        </label>
+      </div>
+      {% endif %}
+
+      <div class="form-actions">
+        <input type="submit" class="btn btn-primary" value="Confirmar Encerramento">
+        <a href="/chamados/{{ chamado.id }}" class="btn">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+function adicionarPeca() {
+  var lista = document.getElementById('pecas-lista');
+  var primeira = lista.querySelector('.peca-linha');
+  var nova = primeira.cloneNode(true);
+  nova.querySelector('select').value = '';
+  nova.querySelector('input[type=number]').value = 1;
+  lista.appendChild(nova);
+}
+function removerLinha(btn) {
+  var linhas = document.querySelectorAll('.peca-linha');
+  if (linhas.length > 1) {
+    btn.closest('.peca-linha').remove();
+  } else {
+    btn.closest('.peca-linha').querySelector('select').value = '';
+  }
+}
+</script>
+{% endblock %}

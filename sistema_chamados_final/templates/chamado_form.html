@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Abrir Chamado{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#128222; Abrir Novo Chamado</div>
+  <div class="window-body">
+    <form method="post" autocomplete="off">
+      <div class="form-group">
+        <label>Título <span class="required">*</span></label>
+        <input type="text" name="titulo" value="{{ form.get('titulo','') }}" required maxlength="200" placeholder="Resumo do problema">
+      </div>
+      <div class="form-group">
+        <label>Descrição <span class="required">*</span></label>
+        <textarea name="descricao" required placeholder="Descreva o problema detalhadamente...">{{ form.get('descricao','') }}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Setor <span class="required">*</span></label>
+        <input type="text" name="setor" value="{{ form.get('setor', session.setor) }}" required maxlength="80">
+      </div>
+      <div class="form-group">
+        <label>Tombo da Máquina</label>
+        <input type="text" id="tombo" name="tombo" value="{{ form.get('tombo','') }}"
+               placeholder="Digite o tombo e clique em Buscar" maxlength="50" onblur="buscarMaquina()">
+        <button type="button" onclick="buscarMaquina()" class="btn">Buscar</button>
+      </div>
+      <div id="maquina-info" style="margin-left:148px;font-size:12px;margin-bottom:6px"></div>
+      <div class="form-group">
+        <label>Prioridade <span class="required">*</span></label>
+        <select name="prioridade" required>
+          <option value="baixa"  {% if form.get('prioridade')=='baixa' %}selected{% endif %}>Baixa</option>
+          <option value="media"  {% if not form.get('prioridade') or form.get('prioridade')=='media' %}selected{% endif %}>Média</option>
+          <option value="alta"   {% if form.get('prioridade')=='alta' %}selected{% endif %}>Alta</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <input type="submit" class="btn btn-primary" value="Abrir Chamado">
+        <a href="/chamados" class="btn">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

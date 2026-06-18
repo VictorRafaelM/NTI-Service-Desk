@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Usuários{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#128100; Gerenciar Usuários</div>
+  <div class="window-body">
+    <div class="toolbar">
+      <a href="/usuarios/novo" class="btn btn-primary">+ Novo Usuário</a>
+      <a href="/logs" class="btn">&#128196; Log de Ações</a>
+    </div>
+    <form class="search-bar" method="get">
+      <input type="text" name="q" value="{{ q }}" placeholder="Nome, CPF ou setor...">
+      <input type="submit" class="btn" value="Pesquisar">
+      {% if q %}<a href="/usuarios" class="btn">Limpar</a>{% endif %}
+    </form>
+    <p style="font-size:11px;color:#555;margin-bottom:4px">Total: {{ total }} registro(s)</p>
+    <table>
+      <tr><th>#</th><th>Nome</th><th>CPF</th><th>Perfil</th><th>Setor</th><th>Situação</th><th>Ações</th></tr>
+      {% for u in usuarios %}
+      <tr {% if not u.ativo %}style="opacity:0.6;background:#f0f0f0"{% endif %}>
+        <td>{{ u.id }}</td>
+        <td>{{ u.nome }}</td>
+        <td>{{ u.cpf[:3] }}.{{ u.cpf[3:6] }}.{{ u.cpf[6:9] }}-{{ u.cpf[9:] }}</td>
+        <td>{{ u.perfil|upper }}</td>
+        <td>{{ u.setor }}</td>
+        <td>{% if u.ativo %}<span class="badge badge-ativa">ATIVO</span>{% else %}<span class="badge badge-baixada">INATIVO</span>{% endif %}</td>
+        <td>
+          <a href="/usuarios/{{ u.id }}/editar" class="btn btn-sm">Editar</a>
+          {% if u.id != session.usuario_id %}
+            {% if u.ativo %}
+            <form method="post" action="/usuarios/{{ u.id }}/desativar" style="display:inline"
+                  onsubmit="return confirm('Desativar {{ u.nome }}?')">
+              <input type="submit" class="btn btn-sm" value="Desativar" style="background:#e8a000;color:#fff">
+            </form>
+            {% else %}
+            <form method="post" action="/usuarios/{{ u.id }}/ativar" style="display:inline">
+              <input type="submit" class="btn btn-sm btn-primary" value="Reativar">
+            </form>
+            {% endif %}
+            <form method="post" action="/usuarios/{{ u.id }}/excluir" style="display:inline"
+                  onsubmit="return confirm('EXCLUIR PERMANENTEMENTE {{ u.nome }}? Esta ação não pode ser desfeita!')">
+              <input type="submit" class="btn btn-sm btn-danger" value="Excluir">
+            </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" style="text-align:center;padding:10px">Nenhum usuário encontrado.</td></tr>
+      {% endfor %}
+    </table>
+    {% if total_pages > 1 %}
+    <div class="paginacao">
+      {% if page > 1 %}<a href="?q={{ q }}&page={{ page-1 }}" class="btn btn-sm">&#8592; Anterior</a>{% endif %}
+      Página {{ page }} de {{ total_pages }}
+      {% if page < total_pages %}<a href="?q={{ q }}&page={{ page+1 }}" class="btn btn-sm">Próxima &#8594;</a>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

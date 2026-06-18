@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Peças{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#128295; Cadastro de Peças</div>
+  <div class="window-body">
+    {% if session.perfil in ('admin','tecnico') %}
+    <div class="toolbar">
+      <a href="/pecas/nova" class="btn btn-primary">+ Nova Peça</a>
+    </div>
+    {% endif %}
+    <form class="search-bar" method="get">
+      <input type="text" name="q" value="{{ q }}" placeholder="Nome da peça ou categoria...">
+      <input type="submit" class="btn" value="Buscar">
+      {% if q %}<a href="/pecas" class="btn">Limpar</a>{% endif %}
+    </form>
+    <p style="font-size:11px;color:#555;margin-bottom:4px">Total: {{ total }} peça(s)</p>
+    <table>
+      <tr><th>#</th><th>Nome</th><th>Categoria</th><th>Local</th><th>Qtd. em Estoque</th><th>Observação</th><th>Ações</th></tr>
+      {% for p in pecas %}
+      <tr {% if p.estoque_local and p.estoque_quantidade == 0 %}style="background:#f8d7da"{% elif p.estoque_local and p.estoque_quantidade <= 2 %}style="background:#fff3cd"{% endif %}>
+        <td>{{ p.id }}</td>
+        <td>{{ p.nome }}</td>
+        <td>{{ p.categoria }}</td>
+        <td>
+          {% if p.estoque_local %}{{ p.estoque_local }}
+          {% else %}<span style="color:#999">Sem registro de estoque</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if p.estoque_local %}
+          <strong {% if p.estoque_quantidade == 0 %}style="color:red"{% elif p.estoque_quantidade <= 2 %}style="color:#856404"{% endif %}>
+            {{ p.estoque_quantidade }}
+          </strong>
+          {% if p.estoque_quantidade == 0 %}&nbsp;&#9888; SEM ESTOQUE
+          {% elif p.estoque_quantidade <= 2 %}&nbsp;&#9888; BAIXO
+          {% endif %}
+          {% else %}—
+          {% endif %}
+        </td>
+        <td>{{ p.observacao or '—' }}</td>
+        <td>
+          <a href="/pecas/{{ p.id }}/historico" class="btn btn-sm">Histórico</a>
+          {% if session.perfil in ('admin','tecnico') %}
+          <a href="/pecas/{{ p.id }}/editar" class="btn btn-sm">Editar</a>
+          {% if not p.estoque_local %}
+          <a href="/estoque/novo" class="btn btn-sm btn-primary">Cadastrar Estoque</a>
+          {% endif %}
+          {% endif %}
+          {% if session.perfil == 'admin' %}
+          <form method="post" action="/pecas/{{ p.id }}/excluir" style="display:inline"
+                onsubmit="return confirm('Excluir peça {{ p.nome }} e todo seu histórico?')">
+            <input type="submit" class="btn btn-sm btn-danger" value="Excluir">
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" style="text-align:center;padding:10px">Nenhuma peça cadastrada.</td></tr>
+      {% endfor %}
+    </table>
+    {% if total_pages > 1 %}
+    <div class="paginacao">
+      {% if page > 1 %}<a href="?q={{ q }}&page={{ page-1 }}" class="btn btn-sm">&#8592; Anterior</a>{% endif %}
+      Página {{ page }} de {{ total_pages }}
+      {% if page < total_pages %}<a href="?q={{ q }}&page={{ page+1 }}" class="btn btn-sm">Próxima &#8594;</a>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

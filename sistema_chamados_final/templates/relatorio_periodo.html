@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Chamados por Período{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#128197; Chamados por Período</div>
+  <div class="window-body">
+    <div class="toolbar">
+      <a href="/relatorios" class="btn">&#8592; Relatórios</a>
+      {% if chamados %}<button onclick="window.print()" class="btn">&#128424; Imprimir</button>{% endif %}
+    </div>
+    <form class="search-bar" method="get" style="margin-bottom:12px">
+      <label style="font-weight:bold;font-size:12px">De:</label>
+      <input type="date" name="data_ini" value="{{ data_ini }}" required>
+      <label style="font-weight:bold;font-size:12px">Até:</label>
+      <input type="date" name="data_fim" value="{{ data_fim }}" required>
+      <input type="submit" class="btn btn-primary" value="Gerar Relatório">
+    </form>
+    {% if data_ini and data_fim %}
+      {% if totais %}
+      <div class="stats-grid" style="margin-bottom:10px">
+        <div class="stat-card"><span class="stat-num">{{ totais.total }}</span><span class="stat-label">Total</span></div>
+        <div class="stat-card"><span class="stat-num" style="color:#856404">{{ totais.abertos }}</span><span class="stat-label">Abertos</span></div>
+        <div class="stat-card"><span class="stat-num" style="color:#004085">{{ totais.andamento }}</span><span class="stat-label">Em Andamento</span></div>
+        <div class="stat-card"><span class="stat-num" style="color:#155724">{{ totais.concluidos }}</span><span class="stat-label">Concluídos</span></div>
+        <div class="stat-card"><span class="stat-num" style="color:#721c24">{{ totais.alta }}</span><span class="stat-label">Alta Prioridade</span></div>
+      </div>
+      {% endif %}
+    <table>
+      <tr><th>#</th><th>Título</th><th>Setor</th><th>Prior.</th><th>Status</th><th>Aberto por</th><th>Técnico</th><th>Abertura</th><th>Conclusão</th></tr>
+      {% for c in chamados %}
+      <tr>
+        <td><a href="/chamados/{{ c.id }}">{{ c.id }}</a></td>
+        <td>{{ c.titulo[:40] }}</td>
+        <td>{{ c.setor }}</td>
+        <td><span class="badge badge-{{ c.prioridade }}">{{ c.prioridade|upper }}</span></td>
+        <td><span class="badge badge-{{ c.status }}">{{ c.status|replace('_',' ')|upper }}</span></td>
+        <td>{{ c.aberto_por_nome }}</td>
+        <td>{{ c.tecnico_nome or '—' }}</td>
+        <td>{{ c.criado_em[:10] }}</td>
+        <td>{{ c.concluido_em[:10] if c.concluido_em else '—' }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="9" style="text-align:center;padding:10px">Nenhum chamado no período.</td></tr>
+      {% endfor %}
+    </table>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

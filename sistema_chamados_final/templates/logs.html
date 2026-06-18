@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Log de Ações{% endblock %}
+{% block content %}
+<div class="window">
+  <div class="window-title">&#128196; Log de Ações do Sistema</div>
+  <div class="window-body">
+    <div class="toolbar"><a href="/usuarios" class="btn">&#8592; Voltar</a></div>
+    <p style="font-size:11px;color:#555;margin-bottom:4px">Total: {{ total }} registro(s)</p>
+    <table>
+      <tr><th>Data/Hora</th><th>Usuário</th><th>Ação</th><th>Detalhe</th></tr>
+      {% for l in logs %}
+      <tr>
+        <td style="white-space:nowrap">{{ l.data[:16] }}</td>
+        <td>{{ l.usuario_nome or '—' }}</td>
+        <td><strong>{{ l.acao|replace('_',' ') }}</strong></td>
+        <td>{{ l.detalhe or '—' }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4" style="text-align:center;padding:10px">Nenhum registro.</td></tr>
+      {% endfor %}
+    </table>
+    {% if total_pages > 1 %}
+    <div class="paginacao">
+      {% if page > 1 %}<a href="?page={{ page-1 }}" class="btn btn-sm">&#8592; Anterior</a>{% endif %}
+      Página {{ page }} de {{ total_pages }}
+      {% if page < total_pages %}<a href="?page={{ page+1 }}" class="btn btn-sm">Próxima &#8594;</a>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
